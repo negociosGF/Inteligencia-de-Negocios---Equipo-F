@@ -1,1 +1,1 @@
-# Inteligencia-de-Negocios---Equipo-F
+# Inteligencia-de-Negocios-EqF
