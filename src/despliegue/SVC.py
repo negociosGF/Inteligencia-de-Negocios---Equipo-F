@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 def app():
     
     # Cargar datos históricos fuera de la función app()
-    ticker = st.text_input('Introducir el artículo en español a analizar', 'NFLX')
+    ticker = st.text_input('Introducir los datos a analizar', 'NFLX')
     hist = yf.download(ticker, period="max", auto_adjust=True)
     hist.index = pd.to_datetime(hist.index)
 
