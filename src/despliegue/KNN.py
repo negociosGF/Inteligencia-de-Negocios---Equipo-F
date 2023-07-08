@@ -70,9 +70,3 @@ def app():
     plt.xlabel('K')
     plt.ylabel('Tasa de Error')
     st.pyplot(fig)
-
-    knn = KNeighborsClassifier(n_neighbors=19)
-    knn.fit(X_train, y_train)
-    pred = knn.predict(X_test)
-    st.write('CON K=19')
-    st.write(classification_report(y_test, pred))
