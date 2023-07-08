@@ -19,15 +19,6 @@ def app():
     # To ignore warnings
     warnings.filterwarnings("ignore")
 
-
-    st.set_page_config(page_title="SVC")
-
-    st.markdown("# SVC")
-    st.sidebar.header("SVC")
-    st.write(
-        """En esta página podrás ver cómo funciona el modelo SVC en la predicción del mercado de valores"""
-    )
-
     ticker = st.text_input('Etiqueta de cotización', 'NFLX')
     st.write('La etiqueta de cotización actual es', ticker)
 
@@ -85,5 +76,3 @@ def app():
     plt.plot(df['Cum_Ret'], color='red')
     plt.plot(df['Cum_Strategy'], color='blue')
     st.pyplot(fig)
-
-    st.write("Haz llegado hasta el final de esta sección. Gracias")
