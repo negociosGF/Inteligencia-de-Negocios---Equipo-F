@@ -10,74 +10,69 @@ warnings.filterwarnings("ignore")
 from sklearn.metrics import classification_report,confusion_matrix
 import streamlit as st
 
-#modelo
 def app():
+    ticker1 = st.text_input('Etiqueta de cotización', 'INTC')
+    st.write('La etiqueta de cotización actual es', ticker1)
 
-  ticker1 = st.text_input('Etiqueta de cotización', 'INTC')
-  st.write('La etiqueta de cotización actual es', ticker1)
+    intc = yf.Ticker(ticker1)
+    hist = intc.history(period="max", auto_adjust=True)
+    hist.head()
 
-  intc = yf.Ticker(ticker1)
-  hist = intc.history(period="max", auto_adjust=True)
-  hist.head()
+    df = hist
 
-  df = hist
+    df['Open-Close'] = df.Open - df.Close
+    df['High-Low'] = df.High - df.Low
 
-  df['Open-Close'] = df.Open - df.Close
-  df['High-Low'] = df.High - df.Low
+    X = df[['Open-Close', 'High-Low']]
+    X.head()
 
-  X = df[['Open-Close', 'High-Low']]
-  X.head()
+    y = np.where(df['Close'].shift(-1) > df['Close'], 1, 0)
 
-  y = np.where(df['Close'].shift(-1) > df['Close'], 1, 0)
+    split_percentage = 0.7
+    split = int(split_percentage * len(df))
 
-  split_percentage = 0.7
-  split = int(split_percentage*len(df))
+    X_train = X[:split]
+    y_train = y[:split]
 
-  X_train = X[:split]
-  y_train = y[:split]
+    X_test = X[split:]
+    y_test = y[split:]
 
-  X_test = X[split:]
-  y_test = y[split:]
+    knn = KNeighborsClassifier(n_neighbors=15)
+    knn.fit(X_train, y_train)
 
-  knn = KNeighborsClassifier(n_neighbors=15)
-  knn.fit(X_train, y_train)
+    # Datos predecidos 
+    st.write("Dataframe con los resultados predecidos")
+    df['Predicted_Signal'] = knn.predict(X)
+    st.write(df)
 
-  print("Predicciones del clasificador:")
-  # test_data_predicted = knn.predict(X_test)
-  # print(test_data_predicted)
-  # st.write(knn.predict(X_test))
-  # print("Resultados esperados:")
-  # print(y_test)
-  # st.write(y_test)
+    # Precisión del modelo
+    st.write("Precisión del modelo")
+    st.write(accuracy_score(knn.predict(X_test), y_test))
 
-  # Datos predecidos 
-  st.write("Dataframe con los resultados predecidos")
-  df['Predicted_Signal'] = knn.predict(X)
-  st.write(df)
+    # Rangos de fecha
+    start_date = st.date_input('Fecha de inicio', value=df.index.min())
+    end_date = st.date_input('Fecha de fin', value=df.index.max())
 
-  # print(accuracy_score(knn.predict(X_test), y_test))
-  # Precisión del modelo
-  st.write("Precisión del modelo")
-  st.write(accuracy_score(knn.predict(X_test), y_test))
+    # Filtra los datos según los rangos de fecha seleccionados
+    filtered_df = df.loc[start_date:end_date]
 
+    # Gráfica de la tasa de error vs. valor de K
+    tasa_error = []
+    for i in range(1, 40):
+        knn_g = KNeighborsClassifier(n_neighbors=i)
+        knn_g.fit(X_train, y_train)
+        pred_i = knn_g.predict(X_test)
+        tasa_error.append(np.mean(pred_i != y_test))
 
-  st.write("Grafica de la tasa de error vs. valor de K")
-  tasa_error = []
-  for i in range(1,40):
-    knn_g = KNeighborsClassifier(n_neighbors=i)
-    knn_g.fit(X_train,y_train)
-    pred_i = knn_g.predict(X_test)
-    tasa_error.append(np.mean(pred_i != y_test))
+    fig = plt.figure(figsize=(10, 6), dpi=250)
+    plt.plot(range(1, 40), tasa_error, color='blue', linestyle='dashed', marker='o', markerfacecolor='red', markersize=10)
+    plt.title('Tasa de Error vs. Valor de K')
+    plt.xlabel('K')
+    plt.ylabel('Tasa de Error')
+    st.pyplot(fig)
 
-  fig = plt.figure(figsize=(10,6),dpi=250)
-  plt.plot(range(1,40),tasa_error,color='blue', linestyle='dashed', marker='o',markerfacecolor='red', markersize=10)
-  plt.title('Tasa de Error vs. Valor de K')
-  plt.xlabel('K')
-  plt.ylabel('Tasa de Error')
-  st.pyplot(fig)
-
-  knn = KNeighborsClassifier(n_neighbors=19)
-  knn.fit(X_train,y_train)
-  pred = knn.predict(X_test)
-  print('CON K=19')
-  print(classification_report(y_test,pred))
+    knn = KNeighborsClassifier(n_neighbors=19)
+    knn.fit(X_train, y_train)
+    pred = knn.predict(X_test)
+    st.write('CON K=19')
+    st.write(classification_report(y_test, pred))
