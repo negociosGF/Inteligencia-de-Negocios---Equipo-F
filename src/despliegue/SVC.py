@@ -34,6 +34,7 @@ def app():
 
     # Guarda todas las variables predictoras en una variable X
     X = df[['Open-Close', 'High-Low']]
+    X.head()
 
     # Variables objetivas
     y = np.where(df['Close'].shift(-1) > df['Close'], 1, 0)
@@ -60,25 +61,25 @@ def app():
     # Calcula retornos acumulativos
     df['Cum_Ret'] = df['Return'].cumsum()
 
+    # Agrega sliders para seleccionar los rangos de fecha
+    start_date = st.date_input('Fecha de inicio', value=df.index.min())
+    end_date = st.date_input('Fecha de fin', value=df.index.max())
+
+    # Filtra los datos según los rangos de fecha seleccionados
+    filtered_df = df.loc[start_date:end_date]
+
     st.write("Dataframe con retornos acumulativos")
-    st.write(df)
+    st.write(filtered_df)
 
     # Haz un plot de retornos de estrategia acumulativos
-    df['Cum_Strategy'] = df['Strategy_Return'].cumsum()
+    filtered_df['Cum_Strategy'] = filtered_df['Strategy_Return'].cumsum()
+
     st.write("Dataframe con retornos de estrategia acumulativos")
-    st.write(df)
+    st.write(filtered_df)
 
     st.write("Plot Strategy Returns vs Original Returns")
-
-    # Agrega sliders para seleccionar los rangos de datos
-    start_index = st.slider('Índice de inicio', min_value=0, max_value=len(df)-1, value=0)
-    end_index = st.slider('Índice de fin', min_value=0, max_value=len(df)-1, value=len(df)-1)
-
-    # Ajusta los datos según los rangos seleccionados
-    adjusted_df = df.iloc[start_index:end_index+1]
-
     fig = plt.figure()
-    plt.plot(adjusted_df['Cum_Ret'], color='red', label='Retornos originales')
-    plt.plot(adjusted_df['Cum_Strategy'], color='blue', label='Retornos de estrategia')
+    plt.plot(filtered_df['Cum_Ret'], color='red', label='Retornos originales')
+    plt.plot(filtered_df['Cum_Strategy'], color='blue', label='Retornos de estrategia')
     plt.legend()
     st.pyplot(fig)
