@@ -23,13 +23,10 @@ def app():
     st.write('La etiqueta de cotización actual es', ticker)
 
     tic = yf.Ticker(ticker)
-    tic
 
     hist = tic.history(period="max", auto_adjust=True)
-    hist
 
     df = hist
-    df.info()
 
     # Crea variables predictoras
     df['Open-Close'] = df.Open - df.Close
@@ -37,7 +34,6 @@ def app():
 
     # Guarda todas las variables predictoras en una variable X
     X = df[['Open-Close', 'High-Low']]
-    X.head()
 
     # Variables objetivas
     y = np.where(df['Close'].shift(-1) > df['Close'], 1, 0)
@@ -63,15 +59,26 @@ def app():
     df['Strategy_Return'] = df.Return * df.Predicted_Signal.shift(1)
     # Calcula retornos acumulativos
     df['Cum_Ret'] = df['Return'].cumsum()
+
     st.write("Dataframe con retornos acumulativos")
     st.write(df)
+
     # Haz un plot de retornos de estrategia acumulativos
     df['Cum_Strategy'] = df['Strategy_Return'].cumsum()
     st.write("Dataframe con retornos de estrategia acumulativos")
     st.write(df)
 
     st.write("Plot Strategy Returns vs Original Returns")
+
+    # Agrega sliders para seleccionar los rangos de datos
+    start_index = st.slider('Índice de inicio', min_value=0, max_value=len(df)-1, value=0)
+    end_index = st.slider('Índice de fin', min_value=0, max_value=len(df)-1, value=len(df)-1)
+
+    # Ajusta los datos según los rangos seleccionados
+    adjusted_df = df.iloc[start_index:end_index+1]
+
     fig = plt.figure()
-    plt.plot(df['Cum_Ret'], color='red')
-    plt.plot(df['Cum_Strategy'], color='blue')
+    plt.plot(adjusted_df['Cum_Ret'], color='red', label='Retornos originales')
+    plt.plot(adjusted_df['Cum_Strategy'], color='blue', label='Retornos de estrategia')
+    plt.legend()
     st.pyplot(fig)
