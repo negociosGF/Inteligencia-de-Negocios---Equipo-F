@@ -12,12 +12,15 @@ import numpy as np
 # To plot
 import matplotlib.pyplot as plt
 
-# Cargar datos históricos fuera de la función app()
-ticker = 'NFLX'
-hist = yf.download(ticker, period="max", auto_adjust=True)
-hist.index = pd.to_datetime(hist.index)
+
 
 def app():
+    
+    # Cargar datos históricos fuera de la función app()
+    ticker = st.text_input('Introducir el artículo en español a analizar', 'NFLX')
+    hist = yf.download(ticker, period="max", auto_adjust=True)
+    hist.index = pd.to_datetime(hist.index)
+
     plt.style.use('seaborn-darkgrid')
 
     df = hist
