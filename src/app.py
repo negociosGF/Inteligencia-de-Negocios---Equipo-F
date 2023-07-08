@@ -1,6 +1,6 @@
 import streamlit as st
 from multiapp import MultiApp
-from despliegue import SVC, KNN, home, LSTM,text_mining
+from despliegue import SVR,SVC, KNN, home, LSTM,text_mining
 
 app = MultiApp()
 st.markdown("# Inteligencia de Negocios - Equipo F - Semestre 2023-I ")
@@ -11,6 +11,7 @@ app.add_app("LSTM", LSTM.app)
 app.add_app("Text Mining", text_mining.app)
 app.add_app("KNN", KNN.app)
 app.add_app("SVC", SVC.app)
+app.add_app("SVR", SVC.app)
 
 # app.add_app("Nombre que aparece en el desplegable",<SOLO el nombre del archivo .py de la carpeta despliegue>.app)
 
