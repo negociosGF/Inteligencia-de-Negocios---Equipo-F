@@ -9,6 +9,8 @@ st.markdown("# Inteligencia de Negocios - Equipo F - Semestre 2023-I ")
 app.add_app("Home", home.app)
 app.add_app("LSTM", LSTM.app)
 app.add_app("Text Mining", text_mining.app)
+app.add_app("RandomForestRegression", RandomForestRegression.app)
+
 # app.add_app("Nombre que aparece en el desplegable",<SOLO el nombre del archivo .py de la carpeta despliegue>.app)
 
 # The main app
