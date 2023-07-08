@@ -12,13 +12,6 @@ import streamlit as st
 
 #modelo
 def app():
-  st.set_page_config(page_title="KNN")
-
-  st.markdown("# KNN")
-  st.sidebar.header("KNN")
-  st.write(
-      """El contenido de la página permite visualizar resultados de predicción de precios de acciones utilizando el modelo KNN."""
-  )
 
   ticker1 = st.text_input('Etiqueta de cotización', 'INTC')
   st.write('La etiqueta de cotización actual es', ticker1)
