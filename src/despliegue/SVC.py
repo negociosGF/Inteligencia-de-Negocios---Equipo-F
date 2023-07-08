@@ -1,5 +1,4 @@
 import yfinance as yf
-import warnings
 import streamlit as st
 
 # Machine learning
@@ -13,18 +12,13 @@ import numpy as np
 # To plot
 import matplotlib.pyplot as plt
 
+# Cargar datos históricos fuera de la función app()
+ticker = 'NFLX'
+hist = yf.download(ticker, period="max", auto_adjust=True)
+hist.index = pd.to_datetime(hist.index)
+
 def app():
     plt.style.use('seaborn-darkgrid')
-
-    # To ignore warnings
-    warnings.filterwarnings("ignore")
-
-    ticker = st.text_input('Etiqueta de cotización', 'NFLX')
-    st.write('La etiqueta de cotización actual es', ticker)
-
-    tic = yf.Ticker(ticker)
-
-    hist = tic.history(period="max", auto_adjust=True)
 
     df = hist
 
@@ -34,13 +28,12 @@ def app():
 
     # Guarda todas las variables predictoras en una variable X
     X = df[['Open-Close', 'High-Low']]
-    X.head()
 
     # Variables objetivas
     y = np.where(df['Close'].shift(-1) > df['Close'], 1, 0)
 
     split_percentage = 0.8
-    split = int(split_percentage*len(df))
+    split = int(split_percentage * len(df))
 
     # Train data set
     X_train = X[:split]
@@ -62,8 +55,8 @@ def app():
     df['Cum_Ret'] = df['Return'].cumsum()
 
     # Agrega sliders para seleccionar los rangos de fecha
-    start_date = st.date_input('Fecha de inicio', value=df.index.min())
-    end_date = st.date_input('Fecha de fin', value=df.index.max())
+    start_date = st.date_input('Fecha de inicio', value=df.index.min()).date()
+    end_date = st.date_input('Fecha de fin', value=df.index.max()).date()
 
     # Filtra los datos según los rangos de fecha seleccionados
     filtered_df = df.loc[start_date:end_date]
@@ -82,4 +75,5 @@ def app():
     plt.plot(filtered_df['Cum_Ret'], color='red', label='Retornos originales')
     plt.plot(filtered_df['Cum_Strategy'], color='blue', label='Retornos de estrategia')
     plt.legend()
+    plt.close(fig)  # Cerrar el objeto figura
     st.pyplot(fig)
