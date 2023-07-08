@@ -99,3 +99,4 @@ wrapt==1.15.0
 yfinance==0.2.21
 zipp==3.15.0
 plotly==5.11.0
+plotly-express==0.4.1
