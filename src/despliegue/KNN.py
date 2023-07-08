@@ -7,7 +7,7 @@ import yfinance as yf
 plt.style.use('seaborn-darkgrid')
 import warnings
 warnings.filterwarnings("ignore")
-from sklearn.metrics import classification_report,confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix
 import streamlit as st
 
 def app():
@@ -16,7 +16,7 @@ def app():
 
     intc = yf.Ticker(ticker1)
     hist = intc.history(period="max", auto_adjust=True)
-    hist.head()
+    hist.index = pd.to_datetime(hist.index)
 
     df = hist
 
@@ -50,8 +50,8 @@ def app():
     st.write(accuracy_score(knn.predict(X_test), y_test))
 
     # Rangos de fecha
-    start_date = st.date_input('Fecha de inicio', value=df.index.min())
-    end_date = st.date_input('Fecha de fin', value=df.index.max())
+    start_date = pd.to_datetime(st.date_input('Fecha de inicio', value=df.index.min())).tz_localize(df.index.tz)
+    end_date = pd.to_datetime(st.date_input('Fecha de fin', value=df.index.max())).tz_localize(df.index.tz)
 
     # Filtra los datos según los rangos de fecha seleccionados
     filtered_df = df.loc[start_date:end_date]
