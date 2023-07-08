@@ -11,7 +11,7 @@ app.add_app("LSTM", LSTM.app)
 app.add_app("Text Mining", text_mining.app)
 app.add_app("KNN", KNN.app)
 app.add_app("SVC", SVC.app)
-app.add_app("SVR", SVC.app)
+app.add_app("SVR", SVR.app)
 
 # app.add_app("Nombre que aparece en el desplegable",<SOLO el nombre del archivo .py de la carpeta despliegue>.app)
 
