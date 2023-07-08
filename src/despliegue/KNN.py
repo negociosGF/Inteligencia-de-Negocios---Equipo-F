@@ -10,6 +10,7 @@ warnings.filterwarnings("ignore")
 from sklearn.metrics import classification_report,confusion_matrix
 import streamlit as st
 
+#modelo
 def app():
   st.set_page_config(page_title="KNN")
 
