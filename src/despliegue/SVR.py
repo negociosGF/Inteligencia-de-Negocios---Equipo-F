@@ -89,29 +89,3 @@ def app():
   st.write('The RBF SVR prediction', rbf_svr.predict(day))
   st.write('The Lineal SVR prediction', lin_svr.predict(day))
   st.write('The Polynomial SVR prediction', poly_svr.predict(day))
-
-##########PLANTILLA####################
-  # Evaluación del modelo
-  from sklearn import metrics
-  import plotly.express as px
-  st.title('Evaluación del RBF SVR prediction')
-  ## Métricas
-  MAE=metrics.mean_absolute_error(day, rbf_svr.predict(day))
-  MSE=metrics.mean_squared_error(day, rbf_svr.predict(day))
-  RMSE=np.sqrt(metrics.mean_squared_error(day, rbf_svr.predict(day)))
-  
-  metricas = {
-      'metrica' : ['Mean Absolute Error', 'Mean Squared Error', 'Root Mean Squared Error'],
-      'valor': [MAE, MSE, RMSE]
-  }
-  metricas = pd.DataFrame(metricas)  
-  ### Gráfica de las métricas
-  st.subheader('Métricas de rendimiento') 
-  fig = px.bar(        
-      metricas,
-      x = "metrica",
-      y = "valor",
-      title = "Métricas del RBF SVR prediction",
-      color="metrica"
-  )
-  st.plotly_chart(fig)
