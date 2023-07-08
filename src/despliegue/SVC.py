@@ -55,8 +55,8 @@ def app():
     df['Cum_Ret'] = df['Return'].cumsum()
 
     # Agrega sliders para seleccionar los rangos de fecha
-    start_date = st.date_input('Fecha de inicio', value=df.index.min()).date()
-    end_date = st.date_input('Fecha de fin', value=df.index.max()).date()
+    start_date = pd.to_datetime(st.date_input('Fecha de inicio', value=df.index.min())).date()
+    end_date = pd.to_datetime(st.date_input('Fecha de fin', value=df.index.max())).date()
 
     # Filtra los datos según los rangos de fecha seleccionados
     filtered_df = df.loc[start_date:end_date]
