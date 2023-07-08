@@ -98,3 +98,4 @@ wordcloud==1.9.2
 wrapt==1.15.0
 yfinance==0.2.21
 zipp==3.15.0
+plotly==5.11.0
