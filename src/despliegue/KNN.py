@@ -53,7 +53,7 @@ def app():
   # Datos predecidos 
   st.write("Dataframe con los resultados predecidos")
   df['Predicted_Signal'] = knn.predict(X)
-  df
+  print(df)
 
   # print(accuracy_score(knn.predict(X_test), y_test))
   # Precisión del modelo

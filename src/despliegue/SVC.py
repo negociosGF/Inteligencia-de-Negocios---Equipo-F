@@ -64,12 +64,11 @@ def app():
     # Calcula retornos acumulativos
     df['Cum_Ret'] = df['Return'].cumsum()
     st.write("Dataframe con retornos acumulativos")
-    df
+    print(df)
     # Haz un plot de retornos de estrategia acumulativos
     df['Cum_Strategy'] = df['Strategy_Return'].cumsum()
     st.write("Dataframe con retornos de estrategia acumulativos")
-    df
-
+    print(df)
 
     st.write("Plot Strategy Returns vs Original Returns")
     fig = plt.figure()
