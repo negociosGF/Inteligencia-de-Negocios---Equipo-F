@@ -1,6 +1,6 @@
 import streamlit as st
 from multiapp import MultiApp
-from despliegue import home, LSTM, text_mining
+from despliegue import home, LSTM, text_mining, RandomForestRegression
 
 app = MultiApp()
 st.markdown("# Inteligencia de Negocios - Equipo F - Semestre 2023-I ")
