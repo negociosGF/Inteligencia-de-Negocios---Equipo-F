@@ -81,17 +81,3 @@ def app():
   pred = knn.predict(X_test)
   print('CON K=19')
   print(classification_report(y_test,pred))
-
-  st.markdown(
-      """
-      ### Recomendaciones:
-      - Conocer el concepto básico de KNN y cómo se utilizan para la clasificación de datos.
-      - Elegir un conjunto de datos adecuado para el modelo y evaluar los resultados.
-      - Dividir el conjunto de datos en conjuntos de entrenamiento y prueba para evaluar el desempeño.
-      - Asegurarse de ajustar los parámetros del modelo para obtener el mejor rendimiento.
-      - Evaluar el rendimiento del modelo utilizando métricas de clasificación.
-      - Si el modelo no funciona bien, puede probar con otros parametros o un conjunto de datos diferentes.
-  """
-  )
-
-  st.write("Haz llegado hasta el final de esta sección. Gracias")
