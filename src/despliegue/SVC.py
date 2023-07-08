@@ -1,104 +1,89 @@
+import yfinance as yf
+import warnings
+import streamlit as st
 
 # Machine learning
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 
-# Para manipulación de los datos
+# For data manipulation
 import pandas as pd
 import numpy as np
-import io
 
-# Para gráficos
+# To plot
 import matplotlib.pyplot as plt
-
-
-# Para ignorar amenazas
-import warnings
-warnings.filterwarnings("ignore")
-
-
-from google.colab import files
-import matplotlib.pyplot as plt
-# %matplotlib inline
 
 def app():
     plt.style.use('seaborn-darkgrid')
-    """Cargamos el archivo que usaremos en el análisis:"""
-    uploaded = files.upload()
 
-    """Leemos el archivo que hemos subido para extraer los datos y los mostramos en pantalla:"""
-    df = pd.read_excel(io.BytesIO(uploaded['SCCO.xlsx']))
-    print(df)
+    # To ignore warnings
+    warnings.filterwarnings("ignore")
 
-    """Los datos deben procesarse antes de su uso, de modo que la columna Date tomará la función de índice para hacerlo. Así que primero cambiamos la columna Date como índice...:"""
 
-    df.index = pd.to_datetime(df['Date'])
-    df
+    st.set_page_config(page_title="SVC")
 
-    """...y luego borramos la columna Date original:"""
+    st.markdown("# SVC")
+    st.sidebar.header("SVC")
+    st.write(
+        """En esta página podrás ver cómo funciona el modelo SVC en la predicción del mercado de valores"""
+    )
 
-    df = df.drop(['Date'], axis='columns')
-    df
+    ticker = st.text_input('Etiqueta de cotización', 'NFLX')
+    st.write('La etiqueta de cotización actual es', ticker)
 
-    """Las variables explicativas o independientes se utilizan para predecir la variable de respuesta de valor. La X es un conjunto de datos que contiene las variables que se utilizan para la predicción. La **X** consiste en variables como 'Open – Close' y 'High – Low'. Estos pueden entenderse como indicadores en función de los cuales el algoritmo predecirá la tendencia.
+    tic = yf.Ticker(ticker)
+    tic
 
-    Primero creamos las variables predictivas:
-    """
+    hist = tic.history(period="max", auto_adjust=True)
+    hist
 
-    df['Open - Close'] = df.Open - df.Close
-    df['High - Low'] = df.High - df.Low
+    df = hist
+    df.info()
 
-    """Luego las colocamos en la variable X:"""
+    # Crea variables predictoras
+    df['Open-Close'] = df.Open - df.Close
+    df['High-Low'] = df.High - df.Low
 
-    X = df[['Open - Close', 'High - Low']]
+    # Guarda todas las variables predictoras en una variable X
+    X = df[['Open-Close', 'High-Low']]
     X.head()
 
-    """La variable objetivo es el resultado que el modelo de aprendizaje automático predecirá en función de las variables explicativas. **Y** es un conjunto de datos objetivo que almacena la señal comercial correcta que el algoritmo de aprendizaje automático intentará predecir. Si el precio de mañana es mayor que el precio de hoy, entonces compraremos la acción en particular, de lo contrario no tendremos ninguna posición en el. Almacenaremos +1 para una señal de compra y 0 para una posición sin en y. Usaremos ***where()function*** de NumPy para hacer esto."""
-
+    # Variables objetivas
     y = np.where(df['Close'].shift(-1) > df['Close'], 1, 0)
-    y
-
-    """Dividiremos los datos en conjuntos de datos de entrenamiento y prueba. Esto se hace para que podamos evaluar la efectividad del modelo en el conjunto de datos de prueba."""
 
     split_percentage = 0.8
     split = int(split_percentage*len(df))
 
-    # Data set Entrenamiento
+    # Train data set
     X_train = X[:split]
     y_train = y[:split]
 
-    # Data set Prueba
+    # Test data set
     X_test = X[split:]
     y_test = y[split:]
 
-    """Usaremos la función SVC() de la biblioteca sklearn.svm.SVC para crear nuestro modelo clasificador utilizando el método fit() en el conjunto de datos de entrenamiento."""
-
+    # Support vector classifier
     cls = SVC().fit(X_train, y_train)
 
-    """Vamos a predecir la señal (comprar o vender) usando la función ***cls.predict()***:"""
-
     df['Predicted_Signal'] = cls.predict(X)
-
-    """Calculamos devoluciones diarias:"""
-
+    # Calcula los retornos diarios
     df['Return'] = df.Close.pct_change()
-
-    """Ahora calculamos los retornos de estrategia:"""
-
-    df['Strategy_Return'] = df.Return *df.Predicted_Signal.shift(1)
-
-    """Y por último los rendimientos acumulados:"""
-
+    # Calcula retornos de estrategia
+    df['Strategy_Return'] = df.Return * df.Predicted_Signal.shift(1)
+    # Calcula retornos acumulativos
     df['Cum_Ret'] = df['Return'].cumsum()
+    st.write("Dataframe con retornos acumulativos")
     df
-
+    # Haz un plot de retornos de estrategia acumulativos
     df['Cum_Strategy'] = df['Strategy_Return'].cumsum()
+    st.write("Dataframe con retornos de estrategia acumulativos")
     df
 
-    """Con la información obtenida, hacemos una comparación de devoluciones de estrategia de trama vs. las devoluciones originales:"""
 
-    # Commented out IPython magic to ensure Python compatibility.
+    st.write("Plot Strategy Returns vs Original Returns")
+    fig = plt.figure()
+    plt.plot(df['Cum_Ret'], color='red')
+    plt.plot(df['Cum_Strategy'], color='blue')
+    st.pyplot(fig)
 
-
-    plt.plot(df['Cum_Ret'],color='orange')
-    plt.plot(df['Cum_Strategy'],color='green')
+    st.write("Haz llegado hasta el final de esta sección. Gracias")
